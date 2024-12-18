@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funnel Chart Generator</title> <!-- Page Title -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            width: 100%;
+            background-color: #6590d9;
+            color: black;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px; /* Added space below header */
+        }
+
+        h1 {
+            margin: 20px 0;
+            text-align: center;
+            font-size: 28px;
+            color: #333;
+        }
+
+        #inputFields {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        textarea {
+            width: 80%;
+            max-width: 600px;
+            height: 150px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #95392f;
+        }
+
+        #funnelChart {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        Funnel Chart Generator
+    </header>
+
+    <!-- Main Heading -->
+    <h1>Generate Your Funnel Chart</h1>
+
+    <!-- Input Fields Section -->
+    <div id="inputFields">
+        <label for="jsonInput">Enter Funnel Data (JSON format):</label>
+        <!-- Added dummy data in the textarea -->
+        <textarea id="jsonInput" rows="6" placeholder='[{"stage": "Leads", "value": 1000}, {"stage": "Opportunity", "value": 800}, {"stage": "Proposal", "value": 600}, {"stage": "Negotiation", "value": 400}, {"stage": "Closed", "value": 200}]'>
+[{"stage": "Leads", "value": 1000}, {"stage": "Opportunity", "value": 800}, {"stage": "Proposal", "value": 600}, {"stage": "Negotiation", "value": 400}, {"stage": "Closed", "value": 200}]
+        </textarea>
+        <br>
+        <button onclick="updateFunnelData()">Generate Funnel Chart</button>
+    </div>
+
+    <!-- Funnel Chart Display -->
+    <div id="funnelChart"></div>
+
+    <!-- Download Buttons -->
+    <button onclick="downloadChartAsSVG()">Download Funnel Chart as SVG</button>
+    <button onclick="downloadChartAsJPG()">Download Funnel Chart as JPG</button>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="funnelChart.js"></script>
+
+    <script>
+        function downloadChartAsJPG() {
+            const svg = document.querySelector("#funnelChart svg");
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            // Set canvas size to match the SVG
+            const svgWidth = svg.clientWidth;
+            const svgHeight = svg.clientHeight;
+            canvas.width = svgWidth;
+            canvas.height = svgHeight;
+
+            // Convert SVG to image
+            const img = new Image();
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], { type: "image/svg+xml" });
+            const svgUrl = URL.createObjectURL(svgBlob);
+            img.src = svgUrl;
+
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                const jpgDataUrl = canvas.toDataURL("image/jpeg");
+                const link = document.createElement("a");
+                link.href = jpgDataUrl;
+                link.download = "funnel-chart.jpg";
+                link.click();
+            };
+        }
+    </script>
+
+</body>
+</html>
